@@ -30,7 +30,7 @@ Samples
 
 ####Penicillin, ball and stick, Cycles render
 
-![](http://www.patrick-fuller.com/wp-content/uploads/2012/11/2Aug12.png)
+![](http://www.patrick-fuller.com/wp-content/uploads/2012/11/penicillin_in_marble.png)
 
 ####Rb CD-MOF, ball and stick
 
