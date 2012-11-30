@@ -40,7 +40,7 @@ def draw_molecule(molecule, center=(0,0,0), max_molecule_size=5,
     """ Draw a molecule to blender. Uses loaded json molecule data. """
 
     # Get scale factor - only scales large molecules down
-    max_coord = 0
+    max_coord = 1E-6
     for atom in molecule["atoms"]:
         max_coord = max(max_coord, *[abs(a) for a in atom["location"]])
     scale = min(max_molecule_size / max_coord, 1)
@@ -116,7 +116,7 @@ def draw_molecule(molecule, center=(0,0,0), max_molecule_size=5,
             bond_cylinder = cylinder.copy()
             bond_cylinder.data = cylinder.data.copy()
             bond_cylinder.dimensions = [diameters["bond"] * scale]*2 + [mag]
-            bond_cylinder.location = [c+v for c,v in zip(cent, trans[i])]
+            bond_cylinder.location = [c+scale*v for c,v in zip(cent, trans[i])]
             bond_cylinder.rotation_mode = "AXIS_ANGLE"
             bond_cylinder.rotation_axis_angle = [angle] + list(v_rot)
             bpy.context.scene.objects.link(bond_cylinder)
@@ -145,7 +145,6 @@ def draw_molecule(molecule, center=(0,0,0), max_molecule_size=5,
     bpy.context.scene.update()
     
 # Runs the method
-if __name__ == "__main__":
-    with open("molecule.json") as molecule_file:
-        molecule = json.load(molecule_file)
-    draw_molecule(molecule, show_bonds=True)
+with open("molecule.json") as molecule_file:
+    molecule = json.load(molecule_file)
+draw_molecule(molecule, show_bonds=False)
