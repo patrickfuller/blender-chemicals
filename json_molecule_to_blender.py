@@ -145,6 +145,7 @@ def draw_molecule(molecule, center=(0,0,0), max_molecule_size=5,
     bpy.context.scene.update()
     
 # Runs the method
-with open("molecule.json") as molecule_file:
-    molecule = json.load(molecule_file)
-draw_molecule(molecule, show_bonds=False)
+if __name__ == "__main__":
+    with open("molecule.json") as molecule_file:
+        molecule = json.load(molecule_file)
+    draw_molecule(molecule, show_bonds=False)

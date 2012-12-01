@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 """
-Converts chemical datatypes to json.
-
-This uses the python bindings on the openbabel library. 
-Unfortunately, it segfaults sometimes.
+Converts any chemical datatype supported by openbabel to json.
 
 Written by Patrick Fuller, patrickfuller@gmail.com, 28 Nov 12
 """
@@ -14,16 +11,13 @@ import re
 import json
 
 def molecule_to_json(molecule):
-    """
-    Converts an OpenBabel molecule to json for use in Blender
-    """
+    """ Converts an OpenBabel molecule to json for use in Blender """
     
     # Get centroid to center molecule at (0, 0, 0)
     centroid = [0, 0, 0]
     for atom in molecule.atoms:
         centroid = [c+a for c, a in zip(centroid, atom.coords)]
     centroid = [c/float(len(molecule.atoms)) for c in centroid]
-    
     
     # Openbabel atom types have valence ints. Remove those.
     # There are other flags on common atoms (aromatic, .co, am, etc.)
@@ -34,9 +28,6 @@ def molecule_to_json(molecule):
               "location": [a-c for a,c in zip(atom.coords, centroid)]} 
              for atom in molecule.atoms]
     
-    # There are other flags on common atoms (aromatic, .co, am, etc.)
-    
-             
     # Save number of bonds and indices of endpoint atoms
     # Switch from 1-index to 0-index counting
     bonds = [{"source": b.GetBeginAtom().GetIndex(), 
