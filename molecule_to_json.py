@@ -21,11 +21,11 @@ def molecule_to_json(molecule):
     
     # Openbabel atom types have valence ints. Remove those.
     # There are other flags on common atoms (aromatic, .co, am, etc.)
-    parse_type = lambda t: t[0] if len(t) > 2 else re.sub("\d", "", t)
+    parse_type = lambda t: t[0] if len(t) > 2 else re.sub("(\d|\W)", "", t)
     
     # Save atom element type and 3D location.
     atoms = [{"element": parse_type(atom.type), 
-              "location": [a-c for a,c in zip(atom.coords, centroid)]} 
+              "location": [round(a-c, 3) for a,c in zip(atom.coords, centroid)]} 
              for atom in molecule.atoms]
     
     # Save number of bonds and indices of endpoint atoms
@@ -33,7 +33,33 @@ def molecule_to_json(molecule):
     bonds = [{"source": b.GetBeginAtom().GetIndex(), 
               "target": b.GetEndAtom().GetIndex(),
               "order": b.GetBondOrder()} for b in OBMolBondIter(molecule.OBMol)]
-    return {"atoms": atoms, "bonds": bonds}
+              
+    json_string = json.dumps({"atoms": atoms, "bonds": bonds}, 
+                              sort_keys=True, indent=4)
+    
+    # An obsessive-compulsive hack to display float lists as one line in json
+    json_string = json_string.split('\n')
+    for i, row in enumerate(json_string):
+        # Iterate through all rows that start a list
+        if row[-1] != "[" or not _has_next_float(json_string, i):
+            continue
+        # Move down rows until the list ends, deleting and appending.
+        while _has_next_float(json_string, i):
+            row += " " + json_string[i+1].strip()
+            del json_string[i+1]
+        # Finish off with the closing bracket
+        json_string[i] = row + " ]"
+        del json_string[i+1]
+    # Recombine the list into a string and return
+    return "\n".join(json_string)
+
+def _has_next_float(json_string, i):
+    """ Tests if the next row in a split json string is a float """
+    try:
+        float(json_string[i+1].strip().replace(",",""))
+        return True
+    except:
+        return False 
     
 if __name__ == "__main__":
     from sys import argv, exit
@@ -62,9 +88,9 @@ if __name__ == "__main__":
     
     # User specified args to generate coordinates and keep hydrogen atoms
     if type == "smi":
-        molecule.make3D()
+        molecule.make3D(steps=500)
     if "--addh" not in argv:
         molecule.removeh()
     
     # Print result to stdout for piping and what not
-    print json.dumps(molecule_to_json(molecule), sort_keys=True, indent=4)
+    print molecule_to_json(molecule)
