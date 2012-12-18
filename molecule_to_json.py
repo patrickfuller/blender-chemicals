@@ -9,6 +9,8 @@ import pybel
 from openbabel import OBMolBondIter
 import re
 import json
+from json import encoder
+encoder.FLOAT_REPR = lambda o: format(o, '.3f')
 
 def molecule_to_json(molecule):
     """ Converts an OpenBabel molecule to json for use in Blender """
@@ -25,7 +27,7 @@ def molecule_to_json(molecule):
     
     # Save atom element type and 3D location.
     atoms = [{"element": parse_type(atom.type), 
-              "location": [round(a-c, 3) for a,c in zip(atom.coords, centroid)]} 
+              "location": [a-c for a,c in zip(atom.coords, centroid)]} 
              for atom in molecule.atoms]
     
     # Save number of bonds and indices of endpoint atoms
@@ -48,7 +50,7 @@ def molecule_to_json(molecule):
             row += " " + json_string[i+1].strip()
             del json_string[i+1]
         # Finish off with the closing bracket
-        json_string[i] = row + " ]"
+        json_string[i] = row + " " + json_string[i+1].strip()
         del json_string[i+1]
     # Recombine the list into a string and return
     return "\n".join(json_string)
