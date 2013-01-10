@@ -1,12 +1,12 @@
 # Generate molecule json
-python molecule_to_json.py smi "CC(C)(C)C1=CC2(C=C(C(C)(C)C)C1=O)CC2(c1ccccc1)c1ccccc1" > molecule.json
-
-# Can also do cif files or mol files
-# python molecule_to_json cif my_file.cif > molecule.json
-# python molecule_to_json mol my_file.mol > molecule.json
+# $1 - any format supported my openbabel. Tested on "smi", "mol", and "cif"
+# $2 - either a string or a file correlated to the type specified in $1
+python molecule_to_json.py $1 $2 > molecule.json
 
 # Run in blender
-blender molecule.blend -P json_molecule_to_blender.py
-
-# Mac version, if no blender link
-#/Applications/blender.app/Contents/MacOS/./blender molecule.blend -P molfile_to_blender.py
+if [[ $(uname -s) == "Darwin" ]]; then
+    # Mac version, assumes no blender link
+    /Applications/blender.app/Contents/MacOS/./blender molecule.blend -P json_molecule_to_blender.py
+else
+    blender molecule.blend -P json_molecule_to_blender.py
+fi

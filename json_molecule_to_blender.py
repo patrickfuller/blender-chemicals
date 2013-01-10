@@ -152,4 +152,4 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
 if __name__ == "__main__":
     with open("molecule.json") as molecule_file:
         molecule = json.load(molecule_file)
-    draw_molecule(molecule, show_bonds=False)
+    draw_molecule(molecule, show_bonds=True)
