@@ -16,9 +16,7 @@ Usage
 sh draw_molecule.sh *format* *data*
 ```
 
-*format* is any format in [this list](http://openbabel.org/docs/2.3.0/FileFormats/Overview.html), and *data* is either a string or a file containing the data specified by *format*
-
-For example,
+*format* is any format in [this list](http://openbabel.org/docs/2.3.0/FileFormats/Overview.html), and *data* is either a string or a file containing the data specified by *format*. For example,
 
 ```bash
 sh draw_molecule.sh smi "CC(C)(C)C1=CC2(C=C(C(C)(C)C)C1=O)CC2(c1ccccc1)c1ccccc1"
