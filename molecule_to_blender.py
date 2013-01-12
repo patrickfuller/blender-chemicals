@@ -15,15 +15,19 @@ import bpy
 from math import acos
 from mathutils import Vector
 import json
+import os
+
+# Get path of this file (useful when this script is imported)
+path = os.path.dirname(os.path.realpath(__file__))
 
 # Atomic radii from wikipedia, scaled to Blender diameters (C = 0.8 units)
 # http://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)
-with open("atom_diameters.json") as atom_diameters:
+with open(path + "/atom_diameters.json") as atom_diameters:
     diameters = json.load(atom_diameters)
 
 # Atomic colors from cpk
 # http://jmol.sourceforge.net/jscolors/
-with open("atom_colors.json") as atom_colors:
+with open(path + "/atom_colors.json") as atom_colors:
     colors = json.load(atom_colors)
 
 # Atoms that exist in both dictionaries. Only use these.

@@ -9,8 +9,7 @@ import pybel
 from openbabel import OBMolBondIter
 import re
 import json
-from json import encoder
-encoder.FLOAT_REPR = lambda o: format(o, '.3f')
+import json_formatter
 
 
 def molecule_to_json(molecule):
@@ -38,47 +37,22 @@ def molecule_to_json(molecule):
               "order": b.GetBondOrder()}
              for b in OBMolBondIter(molecule.OBMol)]
 
-    json_string = json.dumps({"atoms": atoms, "bonds": bonds},
-                             sort_keys=True, indent=4)
+    return {"atoms": atoms, "bonds": bonds}
 
-    # An obsessive-compulsive hack to display float lists as one line in json
-    json_string = json_string.split('\n')
-    for i, row in enumerate(json_string):
-        # Iterate through all rows that start a list
-        if row[-1] != "[" or not _has_next_float(json_string, i):
-            continue
-        # Move down rows until the list ends, deleting and appending.
-        while _has_next_float(json_string, i):
-            row += " " + json_string[i + 1].strip()
-            del json_string[i + 1]
-        # Finish off with the closing bracket
-        json_string[i] = row + " " + json_string[i + 1].strip()
-        del json_string[i + 1]
-    # Recombine the list into a string and return
-    return "\n".join(json_string)
-
-
-def _has_next_float(json_string, i):
-    """ Tests if the next row in a split json string is a float """
-    try:
-        float(json_string[i + 1].strip().replace(",", ""))
-        return True
-    except:
-        return False
 
 if __name__ == "__main__":
     from sys import argv, exit
 
     # Print help if needed
     if len(argv) < 3 or "--help" in argv:
-        print "USAGE: python molecule_to_json.py *type* *data* (--addh)"
-        print "    type: Type of input: smi, mol, cif, etc."
-        print "    data: Chemical file or string"
-        print "    --addh:  add hydrogen atoms"
+        print ("USAGE: python molecule_to_json.py *type* *data* (--addh)\n"
+               "    type: Type of input: smi, mol, cif, etc.\n"
+               "    data: Chemical file or string\n"
+               "    --addh:  add hydrogen atoms")
         exit()
 
     # "smi", "mol", "cif", etc.
-    type = argv[1]
+    molecule_type = argv[1]
 
     # Support both files and strings.
     try:
@@ -88,14 +62,14 @@ if __name__ == "__main__":
         in_data = argv[2]
 
     # Load openbabel molecule
-    molecule = pybel.readstring(type, in_data)
+    molecule = pybel.readstring(molecule_type, in_data)
     molecule.addh()
 
     # User specified args to generate coordinates and keep hydrogen atoms
-    if type == "smi":
+    if molecule_type == "smi":
         molecule.make3D(steps=500)
     if "--addh" not in argv:
         molecule.removeh()
 
     # Print result to stdout for piping and what not
-    print molecule_to_json(molecule)
+    print json_formatter.dumps(molecule_to_json(molecule))

@@ -6,7 +6,7 @@ python molecule_to_json.py $1 $2 > molecule.json
 # Run in blender
 if [[ $(uname -s) == "Darwin" ]]; then
     # Mac version, assumes no blender link
-    /Applications/blender.app/Contents/MacOS/./blender molecule.blend -P json_molecule_to_blender.py
+    /Applications/blender.app/Contents/MacOS/./blender molecule.blend -P molecule_to_blender.py
 else
-    blender molecule.blend -P json_molecule_to_blender.py
+    blender molecule.blend -P molecule_to_blender.py
 fi
