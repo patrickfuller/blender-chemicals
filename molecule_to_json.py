@@ -8,7 +8,6 @@ Written by Patrick Fuller, patrickfuller@gmail.com, 28 Nov 12
 import pybel
 from openbabel import OBMolBondIter
 import re
-import json
 import json_formatter
 
 
