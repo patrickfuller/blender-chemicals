@@ -38,9 +38,9 @@ Samples
 
 ![](http://www.patrick-fuller.com/wp-content/uploads/2012/11/penicillin_in_marble.png)
 
-####Rb CD-MOF, ball and stick
+####NU-100, ball and stick
 
-![](http://www.patrick-fuller.com/wp-content/uploads/2012/11/mof_ball_and_stick.png)
+![](http://www.patrick-fuller.com/wp-content/uploads/2013/02/nu_100_blender.png)
 
 ####Rb CD-MOF, space filling
 
