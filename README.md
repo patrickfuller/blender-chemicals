@@ -8,7 +8,7 @@ Usage
 
 ###Without dependencies
 
-Use [this online tool](patrick-fuller.com/imolecule.html) to convert a chemical file
+Use [this online tool](http://www.patrick-fuller.com/imolecule.html) to convert a chemical file
 from any input format to Javascript Object Notation (drag input file into window,
 then click "save as"). Rename it to `molecule.json`, and place it in the same
 directory as these scripts. Then, load the file into Blender with
@@ -25,14 +25,11 @@ The drawing function has the option to set a scale limit on molecules via
 
 It's a short script - don't be afraid to open it up and hack it to suit your needs.
 
-Samples
--------
-
 ###With dependencies
 
 In order to locally convert files to the required format, you will need the
 [Open Babel](http://openbabel.org/wiki/Main_Page) library and Python bindings
-for chemical file format parsing. which can be installed via apt-get/macports
+for chemical file format parsing, which can be installed via apt-get/macports
 (the pip repository doesn't work).
 
 ```bash
