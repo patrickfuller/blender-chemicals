@@ -18,16 +18,16 @@ import json
 import os
 
 # Get path of this file (useful when this script is imported)
-path = os.path.dirname(os.path.realpath(__file__))
+PATH = os.path.dirname(os.path.realpath(__file__))
 
 # Atomic radii from wikipedia, scaled to Blender diameters (C = 0.8 units)
 # http://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)
-with open(path + "/atom_diameters.json") as atom_diameters:
+with open(os.path.join(PATH, "atom_diameters.json")) as atom_diameters:
     diameters = json.load(atom_diameters)
 
 # Atomic colors from cpk
 # http://jmol.sourceforge.net/jscolors/
-with open(path + "/atom_colors.json") as atom_colors:
+with open(os.path.join(PATH, "atom_colors.json")) as atom_colors:
     colors = json.load(atom_colors)
 
 # Atoms that exist in both dictionaries. Only use these.
@@ -42,7 +42,7 @@ for key in available_atoms:
 
 def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
                   show_bonds=True):
-    """ Draw a molecule to blender. Uses loaded json molecule data. """
+    """Draw a molecule to blender. Uses loaded json molecule data."""
 
     # Get scale factor - only scales large molecules down
     max_coord = 1E-6
@@ -91,12 +91,12 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
     for bond in molecule["bonds"]:
 
         # Extracting locations
-        first_loc = molecule["atoms"][bond["source"]]["location"]
-        second_loc = molecule["atoms"][bond["target"]]["location"]
+        first_loc = molecule["atoms"][bond["atoms"][0]]["location"]
+        second_loc = molecule["atoms"][bond["atoms"][1]]["location"]
         diff = [c2 - c1 for c2, c1 in zip(first_loc, second_loc)]
         cent = [(c2 + c1) / 2 for c2, c1 in zip(first_loc, second_loc)]
-        mag = sum(
-            [(c2 - c1) ** 2 for c1, c2 in zip(first_loc, second_loc)]) ** 0.5
+        mag = sum([(c2 - c1) ** 2
+                   for c1, c2 in zip(first_loc, second_loc)]) ** 0.5
 
         # Euler rotation calculation
         v_axis = Vector(diff).normalized()

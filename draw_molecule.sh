@@ -1,7 +1,7 @@
 # Generate molecule json
-# $1 - any format supported my openbabel. Tested on "smi", "mol", and "cif"
-# $2 - either a string or a file correlated to the type specified in $1
-python molecule_to_json.py $1 $2 > molecule.json
+# $1 - either a string or a file correlated to the type specified in $2
+# $2 - any input format supported by openbabel
+python format_converter.py $1 $2 json > molecule.json
 
 # Run in blender
 if [[ $(uname -s) == "Darwin" ]]; then
