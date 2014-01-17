@@ -4,6 +4,21 @@ Chemicals in Blender
 Draws chemicals in Blender using common input formats (smiles, molfiles, cif files,
 etc.). For details, read my [blog post](http://www.patrick-fuller.com/molecules-from-smiles-molfiles-in-blender/).
 
+Samples
+-------
+
+####Caffeine, ball and stick
+
+![](http://www.patrick-fuller.com/img/caffeine_step_five_960.png)
+
+####Penicillin, ball and stick, Cycles render
+
+![](http://www.patrick-fuller.com/img/penicillin_in_marble_960.png)
+
+####NU-100, ball and stick
+
+![](http://www.patrick-fuller.com/img/nu_100_blender_960.png)
+
 Usage
 -----
 
@@ -60,18 +75,3 @@ sh draw_molecule.sh "CC(C)(C)C1=CC2(C=C(C(C)(C)C)C1=O)CC2(c1ccccc1)c1ccccc1" smi
 ```
 
 will convert the input data (string or file path) and load into Blender.
-
-Samples
--------
-
-####Caffeine, ball and stick
-
-![](http://www.patrick-fuller.com/img/caffeine_step_five_960.png)
-
-####Penicillin, ball and stick, Cycles render
-
-![](http://www.patrick-fuller.com/img/penicillin_in_marble_960.png)
-
-####NU-100, ball and stick
-
-![](http://www.patrick-fuller.com/img/nu_100_blender_960.png)
