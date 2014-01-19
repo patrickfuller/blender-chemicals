@@ -33,12 +33,6 @@ with open(os.path.join(PATH, "atom_colors.json")) as atom_colors:
 # Atoms that exist in both dictionaries. Only use these.
 available_atoms = set(diameters.keys()) & set(colors.keys())
 
-# Add atom materials to blender
-for key in available_atoms:
-    bpy.data.materials.new(name=key)
-    bpy.data.materials[key].diffuse_color = colors[key]
-    bpy.data.materials[key].specular_intensity = 0.2
-
 
 def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
                   show_bonds=True):
@@ -55,21 +49,28 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
         atom["location"] = [c + x * scale for c, x in zip(center,
                                                           atom["location"])]
 
-    # Add some mesh primitives
-    bpy.ops.object.select_all(action='DESELECT')
-    bpy.ops.mesh.primitive_uv_sphere_add()
-    sphere = bpy.context.object
-    bpy.ops.mesh.primitive_cylinder_add()
-    cylinder = bpy.context.object
-    cylinder.active_material = bpy.data.materials["bond"]
-
     # Keep references to all atoms and bonds
     shapes = []
 
-    # If using space_filling model, scale up atom size and remove bonds
+    # If using space-filling model, scale up atom size and remove bonds
     if not show_bonds:
         scale *= 2.5
         molecule["bonds"] = []
+
+    # Add atom primitive
+    bpy.ops.object.select_all(action='DESELECT')
+    bpy.ops.mesh.primitive_uv_sphere_add()
+    sphere = bpy.context.object
+
+    # Add bond material and primitive if it's going to be used
+    if molecule["bonds"]:
+        key = "bond"
+        bpy.data.materials.new(name=key)
+        bpy.data.materials[key].diffuse_color = colors[key]
+        bpy.data.materials[key].specular_intensity = 0.2
+        bpy.ops.mesh.primitive_cylinder_add()
+        cylinder = bpy.context.object
+        cylinder.active_material = bpy.data.materials["bond"]
 
     # Draw atoms
     for atom in molecule["atoms"]:
@@ -77,6 +78,13 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
         # If element is not in dictionary, use undefined values
         if atom["element"] not in available_atoms:
             atom["element"] = "undefined"
+
+        # If material for atom type has not yet been defined, do so
+        if atom["element"] not in bpy.data.materials:
+            key = atom["element"]
+            bpy.data.materials.new(name=key)
+            bpy.data.materials[key].diffuse_color = colors[key]
+            bpy.data.materials[key].specular_intensity = 0.2
 
         # Copy mesh primitive and edit to make atom
         atom_sphere = sphere.copy()
@@ -133,7 +141,8 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
     # Remove primitive meshes
     bpy.ops.object.select_all(action='DESELECT')
     sphere.select = True
-    cylinder.select = True
+    if molecule["bonds"]:
+        cylinder.select = True
     # If the starting cube is there, remove it
     if "Cube" in bpy.data.objects.keys():
         bpy.data.objects.get("Cube").select = True
@@ -156,4 +165,4 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
 if __name__ == "__main__":
     with open("molecule.json") as molecule_file:
         molecule = json.load(molecule_file)
-    draw_molecule(molecule, show_bonds=True)
+    draw_molecule(molecule, show_bonds=False)
