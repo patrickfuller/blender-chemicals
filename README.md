@@ -19,6 +19,10 @@ Samples
 
 ![](http://www.patrick-fuller.com/img/nu_100_blender_960.png)
 
+####NU-100, 3D printed from Blender output
+
+![](http://www.patrick-fuller.com/img/nu_100_3d_print.png)
+
 Usage
 -----
 
