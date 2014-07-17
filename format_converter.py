@@ -3,6 +3,7 @@ Methods to interconvert between json and other (cif, mol, smi, etc.) files
 """
 
 import os
+import sys
 
 import numpy as np
 from numpy.linalg import norm
@@ -12,6 +13,8 @@ ob = pybel.ob
 import json_formatter as json
 
 ROOT = os.path.normpath(os.path.dirname(__file__))
+IS_PY3 = sys.version > "3"
+
 with open(os.path.join(ROOT, "atoms.json")) as in_file:
     atom_map = json.load(in_file)
 
@@ -21,14 +24,19 @@ def convert(data, in_format, out_format, pretty=True, add_h=False):
     # Decide on a json formatter depending on desired prettiness
     dumps = json.dumps if pretty else json.compress
 
+    # Not doing this can cause segfaults in the underlying openbabel C++
+    if not IS_PY3:
+        in_format.encode("ascii")
+        out_format.encode("ascii")
+        data.encode("ascii", "replace")
+
     # If it's a json string, load it. NOTE: This is a custom chemical format
-    if in_format == "json" and isinstance(data, basestring):
+    if in_format == "json" and isinstance(data, str if IS_PY3 else basestring):
         data = json.loads(data)
 
     # These use the open babel library to interconvert, with additions for json
     mol = (json_to_pybel(data) if in_format == "json" else
-           pybel.readstring(in_format.encode("ascii"),
-                            data.encode("ascii", "replace")))
+           pybel.readstring(in_format, data))
 
     # Infer structure in cases where the input format has no specification
     # or the specified structure is small
@@ -40,7 +48,7 @@ def convert(data, in_format, out_format, pretty=True, add_h=False):
         mol.addh()
 
     return (dumps(pybel_to_json(mol)) if out_format == "json"
-            else mol.write(out_format.encode("ascii")))
+            else mol.write(out_format))
 
 
 def json_to_pybel(data):
@@ -98,4 +106,4 @@ if __name__ == "__main__":
             data = in_file.read()
     except IOError:
         data = in_data
-    print convert(data, in_format, out_format)
+    print(convert(data, in_format, out_format))

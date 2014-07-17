@@ -122,10 +122,10 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
             trans = [[0] * 3]
         elif bond["order"] == 2:
             trans = [[0.7 * diameters["bond"] * x for x in v_obj],
-                    [-0.7 * diameters["bond"] * x for x in v_obj]]
+                     [-0.7 * diameters["bond"] * x for x in v_obj]]
         elif bond["order"] == 3:
             trans = [[0] * 3, [1.1 * diameters["bond"] * x for x in v_obj],
-                    [-1.1 * diameters["bond"] * x for x in v_obj]]
+                     [-1.1 * diameters["bond"] * x for x in v_obj]]
         # Draw bonds
         for i in range(bond["order"]):
             bond_cylinder = cylinder.copy()
@@ -165,4 +165,4 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
 if __name__ == "__main__":
     with open("molecule.json") as molecule_file:
         molecule = json.load(molecule_file)
-    draw_molecule(molecule, show_bonds=False)
+    draw_molecule(molecule, show_bonds=True)
