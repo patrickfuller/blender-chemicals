@@ -6,7 +6,7 @@ Blender scripts are weird. Either run this inside of Blender or in a shell with
     blender foo.blend -P molecule_to_blender.py
 
 The script expects an input file named "molecule.json" and should be in the
-same directory as "atom_diameters.json" and "atom_colors.json"
+same directory as "atoms.json"
 
 Written by Patrick Fuller, patrickfuller@gmail.com, 28 Nov 12
 """
@@ -20,18 +20,12 @@ import os
 # Get path of this file (useful when this script is imported)
 PATH = os.path.dirname(os.path.realpath(__file__))
 
-# Atomic radii from wikipedia, scaled to Blender diameters (C = 0.8 units)
+# Atomic radii from wikipedia, scaled to Blender radii (C = 0.4 units)
 # http://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)
-with open(os.path.join(PATH, "atom_diameters.json")) as atom_diameters:
-    diameters = json.load(atom_diameters)
-
 # Atomic colors from cpk
 # http://jmol.sourceforge.net/jscolors/
-with open(os.path.join(PATH, "atom_colors.json")) as atom_colors:
-    colors = json.load(atom_colors)
-
-# Atoms that exist in both dictionaries. Only use these.
-available_atoms = set(diameters.keys()) & set(colors.keys())
+with open(os.path.join(PATH, "atoms.json")) as in_file:
+    atom_data = json.load(in_file)
 
 
 def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
@@ -66,7 +60,7 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
     if molecule["bonds"]:
         key = "bond"
         bpy.data.materials.new(name=key)
-        bpy.data.materials[key].diffuse_color = colors[key]
+        bpy.data.materials[key].diffuse_color = atom_data[key]["color"]
         bpy.data.materials[key].specular_intensity = 0.2
         bpy.ops.mesh.primitive_cylinder_add()
         cylinder = bpy.context.object
@@ -76,21 +70,22 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
     for atom in molecule["atoms"]:
 
         # If element is not in dictionary, use undefined values
-        if atom["element"] not in available_atoms:
+        if atom["element"] not in atom_data:
             atom["element"] = "undefined"
 
         # If material for atom type has not yet been defined, do so
         if atom["element"] not in bpy.data.materials:
             key = atom["element"]
             bpy.data.materials.new(name=key)
-            bpy.data.materials[key].diffuse_color = colors[key]
+            bpy.data.materials[key].diffuse_color = atom_data[key]["color"]
             bpy.data.materials[key].specular_intensity = 0.2
 
         # Copy mesh primitive and edit to make atom
         atom_sphere = sphere.copy()
         atom_sphere.data = sphere.data.copy()
         atom_sphere.location = atom["location"]
-        atom_sphere.dimensions = [diameters[atom["element"]] * scale] * 3
+        atom_sphere.dimensions = [atom_data[atom["element"]]["radius"] *
+                                  scale * 2] * 3
         atom_sphere.active_material = bpy.data.materials[atom["element"]]
         bpy.context.scene.objects.link(atom_sphere)
         shapes.append(atom_sphere)
@@ -121,16 +116,18 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
         if bond["order"] == 1:
             trans = [[0] * 3]
         elif bond["order"] == 2:
-            trans = [[0.7 * diameters["bond"] * x for x in v_obj],
-                     [-0.7 * diameters["bond"] * x for x in v_obj]]
+            trans = [[1.4 * atom_data["bond"]["radius"] * x for x in v_obj],
+                     [-1.4 * atom_data["bond"]["radius"] * x for x in v_obj]]
         elif bond["order"] == 3:
-            trans = [[0] * 3, [1.1 * diameters["bond"] * x for x in v_obj],
-                     [-1.1 * diameters["bond"] * x for x in v_obj]]
+            trans = [[0] * 3,
+                     [2.2 * atom_data["bond"]["radius"] * x for x in v_obj],
+                     [-2.2 * atom_data["bond"]["radius"] * x for x in v_obj]]
         # Draw bonds
         for i in range(bond["order"]):
             bond_cylinder = cylinder.copy()
             bond_cylinder.data = cylinder.data.copy()
-            bond_cylinder.dimensions = [diameters["bond"] * scale] * 2 + [mag]
+            bond_cylinder.dimensions = [atom_data["bond"]["radius"] * scale *
+                                        2] * 2 + [mag]
             bond_cylinder.location = [c + scale * v for c,
                                       v in zip(cent, trans[i])]
             bond_cylinder.rotation_mode = "AXIS_ANGLE"

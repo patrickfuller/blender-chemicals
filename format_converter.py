@@ -14,9 +14,7 @@ import json_formatter as json
 
 ROOT = os.path.normpath(os.path.dirname(__file__))
 IS_PY3 = sys.version > "3"
-
-with open(os.path.join(ROOT, "atoms.json")) as in_file:
-    atom_map = json.load(in_file)
+TABLE = ob.OBElementTable()
 
 
 def convert(data, in_format, out_format, pretty=True, add_h=False):
@@ -57,7 +55,7 @@ def json_to_pybel(data):
     obmol.BeginModify()
     for atom in data["atoms"]:
         obatom = obmol.NewAtom()
-        obatom.SetAtomicNum(atom_map.index(atom["element"]) + 1)
+        obatom.SetAtomicNum(TABLE.GetAtomicNum(atom["element"]))
         obatom.SetVector(*atom["location"])
     # If there is no bond data, try to infer them
     if "bonds" not in data or not data["bonds"]:
@@ -77,7 +75,8 @@ def json_to_pybel(data):
 def pybel_to_json(molecule):
     """Converts a pybel molecule to json."""
     # Save atom element type and 3D location.
-    atoms = [{"element": atom_map[atom.atomicnum - 1], "location": atom.coords}
+    atoms = [{"element": TABLE.GetSymbol(atom.atomicnum),
+              "location": atom.coords}
              for atom in molecule.atoms]
     # Save number of bonds and indices of endpoint atoms
     bonds = [{"atoms": [b.GetBeginAtom().GetIndex(),
