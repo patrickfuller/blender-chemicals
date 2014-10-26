@@ -38,8 +38,7 @@ blender -P molecule_to_blender.py
 ```
 
 Without the command line, you can copy and paste the contents of `molecule_to_blender.py`
-into Blender, update paths to `atomic_diameters.json`, `atomic_colors.json`, and
-`molecule.json`, and run.
+into Blender, update paths to `atoms.json` and `molecule.json`, and run.
 
 The drawing function has the option to set a scale limit on molecules via
 `max_molecule_size`. It can also generate space-filling models by setting
