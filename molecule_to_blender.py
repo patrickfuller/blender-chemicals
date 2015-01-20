@@ -105,7 +105,15 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
         v_axis = Vector(diff).normalized()
         v_obj = Vector((0, 0, 1))
         v_rot = v_obj.cross(v_axis)
-        angle = acos(v_obj.dot(v_axis))
+
+        # This check prevents gimbal lock (ie. weird behavior when v_axis is
+        # close to (0, 0, 1))
+        if v_rot.length > 0.01:
+            v_rot = v_rot.normalized()
+            axis_angle = [acos(v_obj.dot(v_axis))] + list(v_rot)
+        else:
+            v_rot = Vector((1, 0, 0))
+            axis_angle = [0] * 4
 
         # Check that the number of bonds is logical
         if bond["order"] not in range(1, 4):
@@ -116,12 +124,12 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
         if bond["order"] == 1:
             trans = [[0] * 3]
         elif bond["order"] == 2:
-            trans = [[1.4 * atom_data["bond"]["radius"] * x for x in v_obj],
-                     [-1.4 * atom_data["bond"]["radius"] * x for x in v_obj]]
+            trans = [[1.4 * atom_data["bond"]["radius"] * x for x in v_rot],
+                     [-1.4 * atom_data["bond"]["radius"] * x for x in v_rot]]
         elif bond["order"] == 3:
             trans = [[0] * 3,
-                     [2.2 * atom_data["bond"]["radius"] * x for x in v_obj],
-                     [-2.2 * atom_data["bond"]["radius"] * x for x in v_obj]]
+                     [2.2 * atom_data["bond"]["radius"] * x for x in v_rot],
+                     [-2.2 * atom_data["bond"]["radius"] * x for x in v_rot]]
         # Draw bonds
         for i in range(bond["order"]):
             bond_cylinder = cylinder.copy()
@@ -131,7 +139,7 @@ def draw_molecule(molecule, center=(0, 0, 0), max_molecule_size=5,
             bond_cylinder.location = [c + scale * v for c,
                                       v in zip(cent, trans[i])]
             bond_cylinder.rotation_mode = "AXIS_ANGLE"
-            bond_cylinder.rotation_axis_angle = [angle] + list(v_rot)
+            bond_cylinder.rotation_axis_angle = axis_angle
             bpy.context.scene.objects.link(bond_cylinder)
             shapes.append(bond_cylinder)
 
