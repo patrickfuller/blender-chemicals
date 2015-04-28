@@ -28,7 +28,7 @@ Usage
 
 ###Without dependencies
 
-Use [this online tool](http://50.240.131.209:9000/) to convert a chemical file
+Use [this online tool](http://73.209.1.128:9000/) to convert a chemical file
 from any input format to Javascript Object Notation (drag input file into
 window, then click "save as"). Rename it to `molecule.json`, and place it in
 the same directory as these scripts. Then, load the file into Blender with
