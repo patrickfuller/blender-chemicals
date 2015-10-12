@@ -26,32 +26,6 @@ Samples
 Usage
 -----
 
-###Without dependencies
-
-Use [this online tool](http://73.209.1.128:9000/) to convert a chemical file
-from any input format to Javascript Object Notation (drag input file into
-window, then click "save as"). Rename it to `molecule.json`, and place it in
-the same directory as these scripts. Then, load the file into Blender with
-
-```
-blender -P molecule_to_blender.py
-```
-
-Without the command line, you can copy and paste the contents of `molecule_to_blender.py`
-into Blender, update paths to `atoms.json` and `molecule.json`, and run.
-
-The drawing function has the option to set a scale limit on molecules via
-`max_molecule_size`. It can also generate space-filling models by setting
-`show_bonds=False`.
-
-It's a short script - don't be afraid to open it up and hack it to suit your needs.
-
-*NOTE: The referenced online tool is part of
-[imolecule](http://patrick-fuller.com/imolecule/). The above link is to a free
-server with a spotty uptime. If it's down, you'll have to use the approach below.*
-
-###With dependencies
-
 In order to locally convert files to the required format, you will need the
 [Open Babel](http://openbabel.org/wiki/Main_Page) library and Python bindings
 for chemical file format parsing, which is best installed from source.
