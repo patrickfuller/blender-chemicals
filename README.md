@@ -7,19 +7,19 @@ etc.). For details, read my [blog post](https://patrickfuller.github.io/molecule
 Samples
 -------
 
-####Caffeine, ball and stick
+### Caffeine, ball and stick
 
 ![](http://patrickfuller.github.io/img/caffeine_step_five_960.png)
 
-####Penicillin, ball and stick, Cycles render
+### Penicillin, ball and stick, Cycles render
 
 ![](http://patrickfuller.github.io/img/penicillin_in_marble_960.png)
 
-####NU-100, ball and stick
+### NU-100, ball and stick
 
 ![](http://patrickfuller.github.io/img/nu_100_blender_960.png)
 
-####NU-100, 3D printed from Blender output
+### NU-100, 3D printed from Blender output
 
 ![](http://patrickfuller.github.io/img/nu_100_3d_print.png)
 
