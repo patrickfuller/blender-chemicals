@@ -1,7 +1,7 @@
 Chemicals in Blender
 ====================
 
-Draws chemicals in Blender using common input formats (smiles, molfiles, cif files,
+Draws chemicals in Blender ≥2.8 using common input formats (smiles, molfiles, cif files,
 etc.). For details, read my [blog post](https://patrickfuller.github.io/molecules-from-smiles-molfiles-in-blender/).
 
 Samples

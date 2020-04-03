@@ -26,8 +26,9 @@ with open(os.path.join(PATH, 'atoms.json')) as in_file:
     atom_data = json.load(in_file)
 
 
-def draw_molecule(molecule, center=(0, 0, 0), show_bonds=True, join=True):
-    """Draws a JSON-formatted molecule in Blender.
+def draw_molecule(molecule, center=(0, 0, 0), show_bonds=True, join=True,
+                  name='molecule'):
+    """Draw a JSON-formatted molecule in Blender.
 
     This method uses a couple of tricks from [1] to improve rendering speed.
     In particular, it minimizes the amount of unique meshes and materials,
@@ -45,10 +46,14 @@ def draw_molecule(molecule, center=(0, 0, 0), show_bonds=True, join=True):
             True, and a space-filling model if False.
         join: (Optional, default True) Joins the molecule into a single object.
             Set to False if you want to individually manipulate atoms/bonds.
+        name: (Optional, default "molecule") Collection name for this molecule.
     Returns:
         If run in a blender context, will return a visual object of the
         molecule.
+
     """
+    collection = bpy.data.collections.new(name)
+    bpy.context.scene.collection.children.link(collection)
     shapes = []
 
     # If using space-filling model, scale up atom size and remove bonds
@@ -61,7 +66,7 @@ def draw_molecule(molecule, center=(0, 0, 0), show_bonds=True, join=True):
     # Initialize bond material if it's going to be used.
     if show_bonds:
         bpy.data.materials.new(name='bond')
-        bpy.data.materials['bond'].diffuse_color = atom_data['bond']['color']
+        bpy.data.materials['bond'].diffuse_color = atom_data['bond']['color'] + [1]
         bpy.data.materials['bond'].specular_intensity = 0.2
         bpy.ops.mesh.primitive_cylinder_add()
         cylinder = bpy.context.object
@@ -74,7 +79,7 @@ def draw_molecule(molecule, center=(0, 0, 0), show_bonds=True, join=True):
         if atom['element'] not in bpy.data.materials:
             key = atom['element']
             bpy.data.materials.new(name=key)
-            bpy.data.materials[key].diffuse_color = atom_data[key]['color']
+            bpy.data.materials[key].diffuse_color = atom_data[key]['color'] + [1]
             bpy.data.materials[key].specular_intensity = 0.2
 
         atom_sphere = sphere.copy()
@@ -85,7 +90,7 @@ def draw_molecule(molecule, center=(0, 0, 0), show_bonds=True, join=True):
         atom_sphere.dimensions = [atom_data[atom['element']]['radius'] *
                                   scale * 2] * 3
         atom_sphere.active_material = bpy.data.materials[atom['element']]
-        bpy.context.scene.objects.link(atom_sphere)
+        collection.objects.link(atom_sphere)
         shapes.append(atom_sphere)
 
     for bond in (molecule['bonds'] if show_bonds else []):
@@ -131,28 +136,29 @@ def draw_molecule(molecule, center=(0, 0, 0), show_bonds=True, join=True):
                                       v in zip(cent, trans[i])]
             bond_cylinder.rotation_mode = 'AXIS_ANGLE'
             bond_cylinder.rotation_axis_angle = axis_angle
-            bpy.context.scene.objects.link(bond_cylinder)
+            collection.objects.link(bond_cylinder)
             shapes.append(bond_cylinder)
 
     # Remove primitive meshes
     bpy.ops.object.select_all(action='DESELECT')
-    sphere.select = True
+    sphere.select_set(True)
     if show_bonds:
-        cylinder.select = True
+        cylinder.select_set(True)
     # If the starting cube is there, remove it
     if 'Cube' in bpy.data.objects.keys():
-        bpy.data.objects.get('Cube').select = True
+        bpy.data.objects.get('Cube').select_set(True)
     bpy.ops.object.delete()
 
     for shape in shapes:
-        shape.select = True
-    bpy.context.scene.objects.active = shapes[0]
+        shape.select_set(True)
+    bpy.context.view_layer.objects.active = shapes[0]
     bpy.ops.object.shade_smooth()
     if join:
         bpy.ops.object.join()
+        for obj in bpy.context.selected_objects:
+            obj.name = name
 
     bpy.ops.object.origin_set(type='ORIGIN_GEOMETRY', center='MEDIAN')
-    bpy.context.scene.update()
 
 
 if __name__ == '__main__':

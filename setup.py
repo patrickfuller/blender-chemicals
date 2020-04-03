@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='blender-chemicals',
-    version='0.2.1',
+    version='0.3.0',
     description="Imports chemicals into blender with open babel.",
     url='http://github.com/patrickfuller/blender-chemicals/',
     author="Patrick Fuller",
