@@ -2,26 +2,26 @@ Chemicals in Blender
 ====================
 
 Draws chemicals in Blender ≥2.8 using common input formats (smiles, molfiles, cif files,
-etc.). For details, read my [blog post](https://patrickfuller.github.io/molecules-from-smiles-molfiles-in-blender/).
+etc.). For details, read my [blog post](https://patrickfuller.github.io/molecules-in-blender/).
 
 Samples
 -------
 
 ### Caffeine, ball and stick
 
-![](http://patrickfuller.github.io/img/caffeine_step_five_960.png)
+![](examples/caffeine.png)
 
 ### Penicillin, ball and stick, Cycles render
 
-![](http://patrickfuller.github.io/img/penicillin_in_marble_960.png)
+![](examples/penicillin_in_marble.png)
 
 ### NU-100, ball and stick
 
-![](http://patrickfuller.github.io/img/nu_100_blender_960.png)
+![](examples/nu_100_blender.png)
 
 ### NU-100, 3D printed from Blender output
 
-![](http://patrickfuller.github.io/img/nu_100_3d_print.png)
+![](examples/nu_100_3d_print.png)
 
 Installation
 ------------
